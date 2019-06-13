@@ -1,0 +1,22 @@
+sudo: required
+services:
+ - docker
+
+before_install:
+ - docker build -t omriwallach/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+ - docker run omriwallach/react-test npm test -- --coverage
+
+after_success:
+ - docker build -t omriwallach/multi-client ./client
+ - docker build -t omriwallach/multi-nginx ./nginx
+ - docker build -t omriwallach/multi-server ./server
+ - docker build -t omriwallach/multi-worker ./worker
+ # Log to docker cli 
+ - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+ # Push the images to docker hub
+ - docker push omriwallach/multi-client
+ - docker push omriwallach/multi-nginx
+ - docker push omriwallach/multi-server
+ - docker push omriwallach/multi-worker
