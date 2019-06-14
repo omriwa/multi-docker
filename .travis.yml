@@ -20,3 +20,16 @@ after_success:
  - docker push omriwallach/multi-nginx
  - docker push omriwallach/multi-server
  - docker push omriwallach/multi-worker
+ # pull the images in aws
+ deploy:
+  provider: elasticbeanstalk
+  region: eu-central-1
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-eu-central-1-697082700401
+  bucket_path: docker-multi
+  on:
+   branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+   secure: $AWS_SECRET_KEY
